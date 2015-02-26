@@ -14,7 +14,15 @@
 class ofxAnalogTrigger {
     
 public:
-    ofxAnalogTrigger(int min=0, int max=127, int thres = 50, int deadband = 0);
+    
+    enum SensorState {
+        SENSOR_IDLE,
+        SENSOR_RISING,
+        SENSOR_FALLING,
+        SENSOR_ACTIVE
+    };
+    
+    ofxAnalogTrigger(int min=0, int max=127, int thres = 50, int deadband = 0, bool isActiveLow = false);
     
     void enable() {
         ofAddListener(ofEvents().update, this, &ofxAnalogTrigger::update);
@@ -30,17 +38,28 @@ public:
     void setMax(int val) {mySensorMax_ = val;}
     void setThres(int val) {mySensorThres_ = val;}
     void setDeadBand(int val) {myDeadband_ = val;}
+    void setTimeInterval(int interval);
+    
+    ofEvent<int> sensorActivatedEvent;
+    ofEvent<int> sensorRisingEvent;
+    ofEvent<int> sensorFallingEvent;
+    ofEvent<int> sensorDeactivatedEvent;
     
 private:
     int timer;
     
     int mySensorValue_;
-    int mySensorOffDeadband_;
     
     int mySensorMin_;
     int mySensorMax_;
     int mySensorThres_;
     int myDeadband_;
+    bool mySensorIsActiveLow_;
+    
+    int mySensorTimePeriod_ms_;
+    
+
+    SensorState mySensorState_;
     
     
 };
